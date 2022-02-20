@@ -58,6 +58,28 @@
         .cdt_date .cdt_num.milli {
             width: 40px;
         }
+        .btn {
+            width: 480px;
+            margin: 0 auto;
+            text-align: center;
+            background-image: linear-gradient(45deg, #709dff 0%, #91fdb7 100%);
+            border-radius: 10px;
+        }
+        .btn.disabled {
+            background-image: none;
+            background-color: #d8d8d8;
+        }
+        .btn a {
+            font-size: 20px;
+            text-decoration: none;
+            display: block;
+            color: #fff;
+            padding: 14px 0;
+        }
+        .btn.disabled a {
+            color: #8f8f8f;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -66,6 +88,9 @@
           <div class="cdt_txt" id="cdt_txt"></div>
           <div class="cdt_date" id="cdt_date"></div>
         </div>
+    </div>
+    <div id="btn" class="btn">
+        <a href="#">お申し込みはこちら</a>
     </div>
     <script>
         function CountdownTimer(elm, tl, mes) {
@@ -76,32 +101,32 @@
                 this.elem = document.getElementById(elm);
                 this.tl = tl;
                 this.mes = mes;
-        },
-        countDown: function () {
-            var timer = '';
-            var today = new Date();
-            var day = Math.floor((this.tl - today) / (24 * 60 * 60 * 1000));
-            var hour = Math.floor((day * 24) + ((this.tl - today) % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-            var min = Math.floor(((this.tl - today) % (24 * 60 * 60 * 1000)) / (60 * 1000)) % 60;
-            var sec = Math.floor(((this.tl - today) % (24 * 60 * 60 * 1000)) / 1000) % 60 % 60;
-            var milli = Math.floor(((this.tl - today) % (24 * 60 * 60 * 1000)) / 10) % 100;
-            var me = this;
+            },
+            countDown: function () {
+                var timer = '';
+                var today = new Date();
+                var day = Math.floor((this.tl - today) / (24 * 60 * 60 * 1000));
+                var hour = Math.floor((day * 24) + ((this.tl - today) % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+                var min = Math.floor(((this.tl - today) % (24 * 60 * 60 * 1000)) / (60 * 1000)) % 60;
+                var sec = Math.floor(((this.tl - today) % (24 * 60 * 60 * 1000)) / 1000) % 60 % 60;
+                var milli = Math.floor(((this.tl - today) % (24 * 60 * 60 * 1000)) / 10) % 100;
+                var me = this;
 
-            if ((this.tl - today) > 0) {
-            if (hour) timer += '<span class="cdt_num hour">' + hour + '</span><small>時間</small>';
-            timer += '<span class="cdt_num min">' + this.addZero(min) + '</span><small>分</small><span class="cdt_num sec">' + this.addZero(sec) + '</span><small>秒</small><span class="cdt_num milli">' + this.addZero(milli) + '</span>';
-            this.elem.innerHTML = timer;
-            tid = setTimeout(function () {
-                me.countDown();
-            }, 10);
-            } else {
-                this.elem.innerHTML = this.mes;
-                return;
+                if ((this.tl - today) > 0) {
+                if (hour) timer += '<span class="cdt_num hour">' + hour + '</span><small>時間</small>';
+                timer += '<span class="cdt_num min">' + this.addZero(min) + '</span><small>分</small><span class="cdt_num sec">' + this.addZero(sec) + '</span><small>秒</small><span class="cdt_num milli">' + this.addZero(milli) + '</span>';
+                this.elem.innerHTML = timer;
+                tid = setTimeout(function () {
+                    me.countDown();
+                }, 10);
+                } else {
+                    this.elem.innerHTML = this.mes;
+                    return;
+                }
+            },
+            addZero: function (num) {
+                return ('0' + num).slice(-2);
             }
-        },
-        addZero: function (num) {
-            return ('0' + num).slice(-2);
-        }
         }
 
         // ▼ 開始＆終了日時の指定と日付の判別
@@ -109,20 +134,17 @@
             var myD = Date.now(); // 1970/1/1午前0時から現在までのミリ秒
             var start = new Date('2022-02-19T00:00+09:00'); // 開始日時の指定
             var myS = start.getTime(); // 1970/1/1午前0時からの開始日時までのミリ秒
-            var end = new Date('2022-02-28T23:59+09:00'); // 終了日時の指定
+            var end = new Date('2022-02-19T23:59+09:00'); // 終了日時の指定
             var myE = end.getTime(); // 1970/1/1午前0時から終了日時までのミリ秒
 
-            // 今日が開始日前か期間中か終了日後かの判別
             if (myS <= myD && myE >= myD) {
                 var text = '<span>終了</span><span>まで</span>';
                 var tl = end;
             } // 期間中
-            else if (myS > myD) {
-                var text = '<span>開催</span><span>まで</span>';
-                var tl = start;
-            } // 開始日前
             else {
                 var text = "";
+                var btn = document.getElementById('btn');
+                btn.classList.add('disabled');
             } // 終了日後
 
             var timer = new CountdownTimer('cdt_date', tl, '<small>終了しました</small>'); // 終了日後のテキスト
